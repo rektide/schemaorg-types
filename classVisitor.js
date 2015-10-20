@@ -2,6 +2,8 @@
 
 var
   ns= require( "./ns"),
+  arrayOrItemMap= require("./util/arrayOrItemMap"),
+  trimUrl= require( "./util/trimUrl"),
   extract= require( "./extract-id-or-value"),
   keySlot= "label"
 
@@ -19,16 +21,20 @@ function factory( classStore){
 			return
 		}
 		var
-		  found= classStore[ key]|| (classStore[ key]= {})
+		  klass= classStore[ key]|| (classStore[ key]= {})
 		for(var i in ns){
 			var
 			  n= ns[ i],
 			  val= extract( entry, n)
 			if( val!== undefined){
-				found[ i]= val
+				klass[ i]= val
 			}
 		}
-		return found
+		if( klass.subClassOf){
+			klass.subClassOf= arrayOrItemMap( klass.subClassOf, trimUrl)
+		}
+
+		return klass
 	}
 }
 

@@ -16,13 +16,13 @@ function tryIdAndValue( entry){
 	}
 }
 
-function extract(o, ns){
+function extract(o, ns, forceArray){
 	var
 	  entries= o&& o[ ns]
-	if( !entries){
+	if( !entries|| entries.length=== 0){
 		return
 	}
-	if( entries.length> 1){
+	if( entries.length> 1|| forceArray){
 		return entries.map( tryIdAndValue)
 	}else if( entries.length== 1){
 		return tryIdAndValue( entries[0])

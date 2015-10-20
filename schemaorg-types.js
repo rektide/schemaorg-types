@@ -1,28 +1,43 @@
 var
   schemaorg,
   classVisitor,
+  propertyVisitor,
   o
 
 function load( schema){	
 	schema= schema|| schemaorg|| (schemaorg= require( "schemaorg-jsonld"))
 	classVisitor= classVisitor|| (classVisitor= require( "./classVisitor"))
+	propertyVisitor= propertyVisitor|| (propertyVisitor= require( "./propertyVisitor"))
 	var
 	  o= {
-		classes: {}
+		class: {},
+		property: {}
 	  },
-	  cv= classVisitor( o.classes)
+	  cv= classVisitor( o.class),
+	  pv= propertyVisitor( o.property, o.class)
 	for( entry of schema){
 		cv( entry)
+		pv( entry)
 	}
 	return o
 }
 
-Object.defineProperty(module.exports, "classes", {
+Object.defineProperty(module.exports, "class", {
 	get: function(){
 		if( !o){
 			o= load()
 		}
-		return o.classes
+		return o.class
+	},
+	enumerable: true
+})
+
+Object.defineProperty(module.exports, "property", {
+	get: function(){
+		if( !o){
+			o= load()
+		}
+		return o.property
 	},
 	enumerable: true
 })
