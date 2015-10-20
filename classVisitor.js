@@ -1,42 +1,33 @@
 var
-  klass= "http://www.w3.org/2000/01/rdf-schema#Class",
-  ns= {
-	"label": "http://www.w3.org/2000/01/rdf-schema#label",
-	"comment": "http://www.w3.org/2000/01/rdf-schema#comment",
-	"subClassOf": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-	"source": "http://purl.org/dc/terms/source"
-  }
+  ns= require( "./ns"),
+  extract= require( "./extract-id-or-value"),
+  keySlot= "label"
 
-function key( o){
-	return o.label
-}
-
-function factory( o){
-	if( !o){
-		throw new Error( "Require an 'o'")
+function factory( classStore){
+	if( !classStore){
+		throw new Error( "Require a 'classStore'")
 	}
 	return function classVisitor( entry){
-		if( entry[ "@type"].indexOf( klass)=== -1){
+		if( entry[ ns.type].indexOf( ns.class)=== -1){
 			return
 		}
 		var
-		  found= {
-			"@id": entry["@id"],
-			label: entry[ ns.label][ 0][ "@value"],
-			comment: entry[ ns.comment][ 0][ "@value"],
-			subClassOf: null,
-			source: null
-		  },
-		  subClassOf= entry[ ns.subClassOf],
-		  source= entry[ ns.source],
-		  pk= key( found)
-		if( subClassOf){
-			found.subClassOf= subClassOf[ 0][ "@id"]
+		  key= extract( entry[ ns[ keySlot]])
+		if( !key){
+			return
 		}
-		if( source){
-			found.source= source[ 0][ "@id"]
+		console.log("KEY", ns[ keySlot], entry[ ns[ keySlot]])
+		var
+		  found= classStore[ key]|| (classStore[ key]= {})
+		for(var i in ns){
+			var
+			  n = ns[ i],
+			  first= entry[ n],
+			  val= extract( first)
+			if( val!== undefined)
+				found[ i]= val
 		}
-		o[ pk]= found
+		console.log(found)
 		return found
 	}
 }
