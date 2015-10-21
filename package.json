@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "schemaorg-types.js",
 	"scripts": {
+		"files": "find . -path ./node_modules -prune -o -path ./\\.git -prune -o -type f -print",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {

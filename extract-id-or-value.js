@@ -1,11 +1,9 @@
+"use strict"
+
 var
   ns= require( "./ns")
 
-function extract(entry){
-	entry= entry&& entry[0]
-	if( !entry){
-		return
-	}
+function tryIdAndValue( entry){
 	var
 	  id= entry[ ns.id]
 	if( id){
@@ -15,6 +13,19 @@ function extract(entry){
 	  val= entry[ ns.value]
 	if( val){
 		return val
+	}
+}
+
+function extract(o, ns){
+	var
+	  entries= o&& o[ ns]
+	if( !entries){
+		return
+	}
+	if( entries.length> 1){
+		return entries.map( tryIdAndValue)
+	}else if( entries.length== 1){
+		return tryIdAndValue( entries[0])
 	}
 }
 
