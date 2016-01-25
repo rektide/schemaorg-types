@@ -5,6 +5,7 @@ var
   arrayOrItemMap= require( "./util/arrayOrItemMap"),
   trimUrl= require( "./util/trimUrl"),
   extract= require( "./extract-id-or-value"),
+  Type= require("./Type"),
   keySlot= "label"
 
 function factory( propertyStore, classStore){
@@ -13,9 +14,6 @@ function factory( propertyStore, classStore){
 	}
 	if( !propertyStore){
 		throw new Error( "Require a 'propertyStore'")
-	}
-	function fetchClass( klass){
-		return classStore[ klass]|| (classStore[klass]= {})
 	}
 
 	return function propertyVisitor( entry){
@@ -44,17 +42,28 @@ function factory( propertyStore, classStore){
 			var
 			  domain= property.domain[ i],
 			  name= trimUrl( domain),
-			  klass= fetchClass( name)
-			klass.property= klass.property|| {}
-			klass.property[ key]= property.range
+			  klass= Type( name, classStore)
+			klass[ key]= property.range
 		}
 		for( var i= 0; i< (property.range&& property.range.length); ++i){
 			var
 			  range= property.range[ i],
 			  name= trimUrl( range),
-			  klass= fetchClass( name)
-			klass.use= klass.use|| {}
-			klass.use[ key]= property.domain
+			  klass= Type( name, classStore),
+			  use= klass[ "@type"].use|| (klass[ "@type"].use= {})
+
+			var uses= use[ key]
+			if(!uses){
+				use[ key]= property.domain
+			}else{
+				for(var j in property.domain){
+					var user= property.domain[j]
+					if(uses.indexOf(user) === -1){
+						uses.push(user)
+					}
+				}
+				use[ key]= uses
+			}
 		}
 		return property
 	}
