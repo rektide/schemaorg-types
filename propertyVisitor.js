@@ -46,7 +46,7 @@ function factory( propertyStore, classStore){
 			  name= trimUrl( domain),
 			  klass= fetchClass( name)
 			klass.property= klass.property|| {}
-			klass.property[ key]= true
+			klass.property[ key]= property.range
 		}
 		for( var i= 0; i< (property.range&& property.range.length); ++i){
 			var
@@ -54,7 +54,7 @@ function factory( propertyStore, classStore){
 			  name= trimUrl( range),
 			  klass= fetchClass( name)
 			klass.use= klass.use|| {}
-			klass.use[ key]= true
+			klass.use[ key]= property.domain
 		}
 		return property
 	}
